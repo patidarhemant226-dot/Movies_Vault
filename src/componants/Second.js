@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import './Second.css';
 
-import { Container, Row, Col, Card, Modal, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Modal } from "react-bootstrap";
 
 export default function Second() {
   const [movies, SetMovies] = useState([]);
