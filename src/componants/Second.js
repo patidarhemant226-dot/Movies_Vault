@@ -6,6 +6,8 @@ import { Container, Row, Col, Card, Modal } from "react-bootstrap";
 
 export default function Second() {
   const [movies, SetMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
    const [show, setShow] = useState(false);
 
@@ -14,11 +16,20 @@ export default function Second() {
 
 
   const FetchMovies = () => {
-    axios.get("https://www.omdbapi.com/?apikey=4e9e8ed7&s=series").then((result) => {
-      
-      console.log(result.data.Search, "<=====")
-      SetMovies(result.data.Search || []);
-    })
+    setLoading(true);
+    setError(null);
+    axios.get("https://www.omdbapi.com/?apikey=4e9e8ed7&s=series")
+      .then((result) => {
+        console.log(result.data.Search, "<=====")
+        SetMovies(result.data.Search || []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching movies:", error);
+        setError("Failed to load movies. Please try again later.");
+        SetMovies([]);
+        setLoading(false);
+      });
   }
 
   useEffect(() => {
@@ -27,7 +38,10 @@ export default function Second() {
 
   return (
 <React.Fragment>
- <Container className="Card" style={{paddingTop:"30px"}}  variant="primary" onClick={handleShow}>
+  {loading && <Container style={{paddingTop:"30px", textAlign:"center"}}><p>Loading movies...</p></Container>}
+  {error && <Container style={{paddingTop:"30px", textAlign:"center"}}><p style={{color:"red"}}>{error}</p></Container>}
+  {!loading && !error && (
+    <Container className="Card" style={{paddingTop:"30px"}}  variant="primary" onClick={handleShow}>
       <Row xs={1} md={3} className="g-4">
           {movies.slice(0, 5).map((movie) => (
           <Col key={movie.imdbID}>
@@ -47,6 +61,7 @@ export default function Second() {
           </Col>
         ))}
 </Row> </Container>
+  )}
 
  <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
